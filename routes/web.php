@@ -11,6 +11,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
+require __DIR__ . '/customers.php';
 require __DIR__ . '/products.php';
 require __DIR__ . '/sales.php';
 require __DIR__ . '/settings.php';

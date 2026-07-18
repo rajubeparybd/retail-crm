@@ -30,7 +30,7 @@ describe('index', function (): void {
             ->get(route('sales.index'))
             ->assertOk()
             ->assertInertia(
-                fn (AssertableInertia $page): \Inertia\Testing\AssertableInertia => $page
+                fn (AssertableInertia $page): AssertableInertia => $page
                     ->has('sales.data', 1)
                     ->where('sales.total', 1)
                     ->where('sales.data.0.total', '20.00'),
@@ -51,7 +51,7 @@ describe('index', function (): void {
             ->get(route('sales.index', ['page' => 2]))
             ->assertOk()
             ->assertInertia(
-                fn (AssertableInertia $page): \Inertia\Testing\AssertableInertia => $page
+                fn (AssertableInertia $page): AssertableInertia => $page
                     ->where('sales.current_page', 2)
                     ->where('sales.last_page', 2)
                     ->where('sales.per_page', 10)
@@ -72,7 +72,7 @@ describe('checkout', function (): void {
             ->get(route('sales.create'))
             ->assertOk()
             ->assertInertia(
-                fn (AssertableInertia $page): \Inertia\Testing\AssertableInertia => $page->has('products', 2),
+                fn (AssertableInertia $page): AssertableInertia => $page->has('products', 2),
             );
     });
 });

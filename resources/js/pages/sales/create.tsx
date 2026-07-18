@@ -1,7 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import { Plus, Search, Trash2, UserSearch } from 'lucide-react';
-import { useMemo, useState  } from 'react';
-import type {FormEvent} from 'react';
+import { useMemo, useState } from 'react';
+import type { FormEvent } from 'react';
 import { toast } from 'sonner';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';

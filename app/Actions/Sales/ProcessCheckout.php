@@ -70,7 +70,7 @@ class ProcessCheckout
             /** @var Sale $sale */
             $sale = $salesman->sales()->create(['total' => '0']);
 
-            if ($customer instanceof \App\Models\Customer) {
+            if ($customer instanceof Customer) {
                 $sale->customer()->associate($customer);
             }
 

@@ -5,6 +5,7 @@ import {
     LayoutGrid,
     Package,
     ShoppingCart,
+    Users,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
@@ -20,6 +21,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as customersIndex } from '@/routes/customers';
 import { index as productsIndex } from '@/routes/products';
 import { create as checkout, index as salesIndex } from '@/routes/sales';
 import type { NavItem } from '@/types';
@@ -39,6 +41,11 @@ const mainNavItems: NavItem[] = [
         title: 'Sales',
         href: salesIndex().url,
         icon: ShoppingCart,
+    },
+    {
+        title: 'Customers',
+        href: customersIndex().url,
+        icon: Users,
     },
     {
         title: 'POS',
