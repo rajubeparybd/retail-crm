@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Sales;
 
+use App\Events\PurchaseSuccessful;
 use App\Exceptions\InsufficientStockException;
 use App\Models\Customer;
 use App\Models\Product;
@@ -13,22 +14,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
-/**
- * Records a sale for a multi-line cart and strictly controls inventory.
- *
- * Each product's stock is decremented atomically inside a single database
- * transaction. Pessimistic row locks (`lockForUpdate()`) prevent two
- * concurrent checkouts from both passing the stock check and overselling.
- * If any line is missing or has insufficient stock, an exception propagates
- * out of the transaction and the entire sale — including any stock already
- * deducted — is rolled back.
- */
 class ProcessCheckout
 {
-    /**
-     * @param  array<int, array{product_id: int, quantity: int}>  $items
-     * @param  Customer|null  $customer  buyer the POS operator attached (logged-in user is the salesman)
-     */
     public function execute(User $salesman, array $items, ?Customer $customer = null): Sale
     {
         return DB::transaction(function () use ($salesman, $items, $customer): Sale {
@@ -46,7 +33,6 @@ class ProcessCheckout
                 ->get()
                 ->keyBy('id');
 
-            // Validate BEFORE any write: every product exists with enough stock.
             foreach ($items as $item) {
                 $product = $products->get((int) $item['product_id']);
 
@@ -93,16 +79,14 @@ class ProcessCheckout
             }
 
             $sale->forceFill(['total' => $total])->save();
+            $sale->load('items', 'customer');
 
-            return $sale->load('items');
+            event(new PurchaseSuccessful($sale));
+
+            return $sale;
         });
     }
 
-    /**
-     * Guard the cart shape before touching the database.
-     *
-     * @param  array<int, array{product_id: int, quantity: int}>  $items
-     */
     private function ensureValidItems(array $items): void
     {
         if ($items === []) {
