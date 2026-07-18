@@ -11,3 +11,11 @@ parameters:
         - routes/
 
     level: 5
+
+    tmpDir: .temp/phpstan
+
+    parallel:
+        jobSize: 20
+        maximumNumberOfProcesses: 32
+        minimumNumberOfJobsPerProcess: 2
+        processTimeout: 600.0

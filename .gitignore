@@ -29,3 +29,4 @@ yarn-error.log
 /.zed
 /.claude
 /opencode.json
+/.temp
