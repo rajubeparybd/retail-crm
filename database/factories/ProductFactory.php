@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Database\Factories;
+
+use App\Models\Product;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Product>
+ */
+class ProductFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'name' => fake()->words(3, true),
+            'sku' => fake()->unique()->ean13(),
+            'price' => fake()->randomFloat(2, 0, 1000),
+            'stock_quantity' => fake()->numberBetween(0, 500),
+        ];
+    }
+}
