@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Actions\Sales\ProcessCheckout;
+use App\Events\LostCustomerMadePurchase;
 use App\Exceptions\InsufficientStockException;
 use App\Http\Requests\Sales\StoreSaleRequest;
 use App\Models\Customer;
@@ -47,8 +48,11 @@ class SaleController extends Controller
     {
         $data = $request->validated();
 
+        /** @var Customer|null $customer */
+        $customer = null;
+
         try {
-            DB::transaction(function () use ($request, $data): void {
+            DB::transaction(function () use ($request, $data, &$customer): void {
                 $customer = Customer::firstOrCreate(
                     ['email' => $data['customer_email']],
                     [
@@ -70,6 +74,15 @@ class SaleController extends Controller
             ]);
 
             return back()->withInput();
+        }
+
+        // Fire KPI event when a formerly-lost customer with an assigned employee purchases.
+        if ($customer !== null && $customer->assigned_employee_id !== null) {
+            $customer->loadMissing('assignedEmployee');
+
+            /** @var \App\Models\User $employee */
+            $employee = $customer->assignedEmployee;
+            LostCustomerMadePurchase::dispatch($customer, $employee);
         }
 
         Inertia::flash('toast', [

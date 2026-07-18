@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\Events\LostCustomerMadePurchase;
+use App\Listeners\IncrementKpiOnPurchaseListener;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Override;
@@ -28,6 +31,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->registerEventListeners();
+    }
+
+    /**
+     * Register application event listeners.
+     */
+    protected function registerEventListeners(): void
+    {
+        Event::listen(LostCustomerMadePurchase::class, IncrementKpiOnPurchaseListener::class);
     }
 
     /**

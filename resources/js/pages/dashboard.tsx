@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { AlertTriangle, DollarSign, ShoppingCart } from 'lucide-react';
+import { AlertTriangle, DollarSign, ShoppingCart, Users } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import { dashboard } from '@/routes';
+import { index as lostCustomersIndex } from '@/routes/customers/lost-customers';
 import { index as salesIndex } from '@/routes/sales';
 import type { DashboardStats, Sale } from '@/types';
 
@@ -36,7 +37,7 @@ export default function Dashboard({ stats, recentSales }: Props) {
                     description="Store overview at a glance"
                 />
 
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
                             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -76,6 +77,20 @@ export default function Dashboard({ stats, recentSales }: Props) {
                             <div className="text-2xl font-semibold">
                                 {stats.low_stock_count}
                             </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Lost Customers
+                            </CardTitle>
+                            <Users className="size-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <Button variant="link" className="h-auto p-0 text-base font-semibold" asChild>
+                                <Link href={lostCustomersIndex().url}>Assign employees &rarr;</Link>
+                            </Button>
                         </CardContent>
                     </Card>
                 </div>

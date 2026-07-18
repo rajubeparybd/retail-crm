@@ -29,6 +29,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string|null $two_factor_recovery_codes
  * @property Carbon|null $two_factor_confirmed_at
  * @property string|null $remember_token
+ * @property int $kpi_score
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
@@ -38,6 +39,14 @@ class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasRoles, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+
+    /**
+     * @return HasMany<Customer, $this>
+     */
+    public function assignedCustomers(): HasMany
+    {
+        return $this->hasMany(Customer::class, 'assigned_employee_id');
+    }
 
     /**
      * @return HasMany<Sale, $this>

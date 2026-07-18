@@ -5,6 +5,7 @@ export type Customer = {
     name: string;
     email: string;
     phone: string | null;
+    assigned_employee_id: number | null;
 };
 
 export type CustomerPurchaseStats = {
@@ -21,4 +22,15 @@ export type CustomerWithStats = Customer & {
     last_purchase_at: string | null;
 };
 
+export type LostCustomerWithAssignment = {
+    id: number;
+    name: string;
+    email: string;
+    phone: string | null;
+    last_purchase_at: string | null;
+    assigned_employee: { id: number; name: string } | null;
+};
+
 export type PaginatedCustomers = Paginated<CustomerWithStats>;
+export type PaginatedLostCustomers = Paginated<LostCustomerWithAssignment>;
+
