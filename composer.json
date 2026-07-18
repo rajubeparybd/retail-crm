@@ -52,10 +52,8 @@
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
-            "@php artisan optimize:clear",
-            "@php artisan development:setup",
             "@php artisan migrate --force --seed",
-            "@php artisan icons:cache",
+            "@php artisan development:setup",
             "npm install",
             "npm run build",
             "@ide-helper"

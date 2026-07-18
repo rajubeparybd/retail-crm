@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Console\Command\Command as CommandAlias;
 
+#[Description('Setup the development environment')]
+#[Signature('development:setup')]
 final class DevelopmentSetupCommand extends Command
 {
-    protected $signature = 'development:setup';
-
-    protected $description = 'Setup the development environment';
-
     public function handle(): int
     {
         $this->info('Setting up the development environment...');
