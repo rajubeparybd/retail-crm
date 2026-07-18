@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid, Package } from 'lucide-react';
+import {
+    CreditCard,
+    Globe,
+    LayoutGrid,
+    Package,
+    ShoppingCart,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
 import { index as productsIndex } from '@/routes/products';
+import { create as checkout, index as salesIndex } from '@/routes/sales';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -28,18 +35,23 @@ const mainNavItems: NavItem[] = [
         href: productsIndex().url,
         icon: Package,
     },
+    {
+        title: 'Sales',
+        href: salesIndex().url,
+        icon: ShoppingCart,
+    },
+    {
+        title: 'POS',
+        href: checkout().url,
+        icon: CreditCard,
+    },
 ];
 
 const footerNavItems: NavItem[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: FolderGit2,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#react',
-        icon: BookOpen,
+        title: 'Visit Site',
+        href: '/',
+        icon: Globe,
     },
 ];
 

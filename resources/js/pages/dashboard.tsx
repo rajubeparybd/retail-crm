@@ -1,26 +1,141 @@
-import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import { Head, Link } from '@inertiajs/react';
+import { AlertTriangle, DollarSign, ShoppingCart } from 'lucide-react';
+import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { dashboard } from '@/routes';
+import { index as salesIndex } from '@/routes/sales';
+import type { DashboardStats, Sale } from '@/types';
 
-export default function Dashboard() {
+type Props = {
+    stats: DashboardStats;
+    recentSales: Sale[];
+};
+
+const currency = new Intl.NumberFormat(undefined, {
+    style: 'currency',
+    currency: 'USD',
+});
+
+export default function Dashboard({ stats, recentSales }: Props) {
     return (
         <>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+
+            <div className="space-y-6 p-4 md:p-6">
+                <Heading
+                    title="Dashboard"
+                    description="Store overview at a glance"
+                />
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Today&apos;s revenue
+                            </CardTitle>
+                            <DollarSign className="size-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-semibold">
+                                {currency.format(Number(stats.today_revenue))}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Total sales
+                            </CardTitle>
+                            <ShoppingCart className="size-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-semibold">
+                                {stats.total_sales}
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-sm font-medium text-muted-foreground">
+                                Low stock products
+                            </CardTitle>
+                            <AlertTriangle className="size-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-semibold">
+                                {stats.low_stock_count}
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                </div>
+
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <CardTitle>Recent sales</CardTitle>
+                        <Button variant="outline" size="sm" asChild>
+                            <Link href={salesIndex().url}>View all</Link>
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Customer</TableHead>
+                                    <TableHead>Items</TableHead>
+                                    <TableHead className="text-right">
+                                        Total
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {recentSales.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={4}
+                                            className="py-6 text-center text-muted-foreground"
+                                        >
+                                            No sales yet.
+                                        </TableCell>
+                                    </TableRow>
+                                ) : (
+                                    recentSales.map((sale) => (
+                                        <TableRow key={sale.id}>
+                                            <TableCell>
+                                                {new Date(
+                                                    sale.created_at,
+                                                ).toLocaleDateString()}
+                                            </TableCell>
+                                            <TableCell>
+                                                {sale.customer?.name ??
+                                                    'Walk-in'}
+                                            </TableCell>
+                                            <TableCell>
+                                                {sale.items.length}
+                                            </TableCell>
+                                            <TableCell className="text-right">
+                                                {currency.format(
+                                                    Number(sale.total),
+                                                )}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                )}
+                            </TableBody>
+                        </Table>
+                    </CardContent>
+                </Card>
             </div>
         </>
     );

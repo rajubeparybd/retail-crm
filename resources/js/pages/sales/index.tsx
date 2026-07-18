@@ -1,17 +1,7 @@
-import { Form, Head, Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ProductController from '@/actions/App/Http/Controllers/ProductController';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogTitle,
-    DialogTrigger,
-} from '@/components/ui/dialog';
 import {
     Pagination,
     PaginationContent,
@@ -27,11 +17,11 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { create, edit, index as productsIndex } from '@/routes/products';
-import type { BreadcrumbItem, PaginatedProducts } from '@/types';
+import { index as salesIndex, create as checkout } from '@/routes/sales';
+import type { BreadcrumbItem, PaginatedSales } from '@/types';
 
 type Props = {
-    products: PaginatedProducts;
+    sales: PaginatedSales;
 };
 
 const currency = new Intl.NumberFormat(undefined, {
@@ -65,22 +55,18 @@ function pageItems(current: number, last: number): (number | 'ellipsis')[] {
     return items;
 }
 
-export default function ProductsIndex({ products }: Props) {
+export default function SalesIndex({ sales }: Props) {
     return (
         <>
-            <Head title="Products" />
+            <Head title="Sales" />
 
-            <h1 className="sr-only">Products</h1>
+            <h1 className="sr-only">Sales</h1>
 
             <div className="space-y-6 p-4 md:p-6">
-                <Heading
-                    title="Products"
-                    description="Manage your product catalog"
-                />
-
-                <div className="flex justify-end">
+                <div className="flex items-center justify-between gap-4">
+                    <Heading title="Sales" description="Full sales history" />
                     <Button asChild>
-                        <Link href={create()}>Create product</Link>
+                        <Link href={checkout().url}>New sale</Link>
                     </Button>
                 </div>
 
@@ -88,110 +74,42 @@ export default function ProductsIndex({ products }: Props) {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>SKU</TableHead>
-                                <TableHead>Price</TableHead>
-                                <TableHead>Stock</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Customer</TableHead>
+                                <TableHead>Items</TableHead>
                                 <TableHead className="text-right">
-                                    Actions
+                                    Total
                                 </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {products.data.length === 0 ? (
+                            {sales.data.length === 0 ? (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={5}
+                                        colSpan={4}
                                         className="py-6 text-center text-muted-foreground"
                                     >
-                                        No products yet. Create your first
-                                        product.
+                                        No sales recorded yet.
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                products.data.map((product) => (
-                                    <TableRow key={product.id}>
-                                        <TableCell className="font-medium">
-                                            {product.name}
-                                        </TableCell>
-                                        <TableCell className="font-mono text-xs text-muted-foreground">
-                                            {product.sku}
+                                sales.data.map((sale) => (
+                                    <TableRow key={sale.id}>
+                                        <TableCell>
+                                            {new Date(
+                                                sale.created_at,
+                                            ).toLocaleDateString()}
                                         </TableCell>
                                         <TableCell>
-                                            {currency.format(
-                                                Number(product.price),
-                                            )}
+                                            {sale.customer?.name ?? 'Walk-in'}
                                         </TableCell>
                                         <TableCell>
-                                            {product.stock_quantity}
+                                            {sale.items.length}
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button
-                                                    variant="outline"
-                                                    size="sm"
-                                                    asChild
-                                                >
-                                                    <Link href={edit(product)}>
-                                                        Edit
-                                                    </Link>
-                                                </Button>
-
-                                                <Dialog>
-                                                    <DialogTrigger asChild>
-                                                        <Button
-                                                            variant="destructive"
-                                                            size="sm"
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                    </DialogTrigger>
-                                                    <DialogContent>
-                                                        <DialogTitle>
-                                                            Delete product?
-                                                        </DialogTitle>
-                                                        <DialogDescription>
-                                                            Are you sure you
-                                                            want to delete{' '}
-                                                            <span className="font-medium text-foreground">
-                                                                {product.name}
-                                                            </span>
-                                                            ? This action cannot
-                                                            be undone.
-                                                        </DialogDescription>
-
-                                                        <Form
-                                                            {...ProductController.destroy.form(
-                                                                product,
-                                                            )}
-                                                        >
-                                                            {({
-                                                                processing,
-                                                            }) => (
-                                                                <DialogFooter className="gap-2">
-                                                                    <DialogClose
-                                                                        asChild
-                                                                    >
-                                                                        <Button variant="secondary">
-                                                                            Cancel
-                                                                        </Button>
-                                                                    </DialogClose>
-                                                                    <Button
-                                                                        variant="destructive"
-                                                                        type="submit"
-                                                                        disabled={
-                                                                            processing
-                                                                        }
-                                                                    >
-                                                                        Delete
-                                                                        product
-                                                                    </Button>
-                                                                </DialogFooter>
-                                                            )}
-                                                        </Form>
-                                                    </DialogContent>
-                                                </Dialog>
-                                            </div>
+                                            {currency.format(
+                                                Number(sale.total),
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -200,11 +118,11 @@ export default function ProductsIndex({ products }: Props) {
                     </Table>
                 </div>
 
-                {products.total > 0 && (
+                {sales.total > 0 && (
                     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
                         <p className="text-sm text-muted-foreground">
-                            Showing {products.from} to {products.to} of{' '}
-                            {products.total} products
+                            Showing {sales.from} to {sales.to} of {sales.total}{' '}
+                            sales
                         </p>
 
                         <Pagination className="mx-0 sm:justify-end">
@@ -218,11 +136,11 @@ export default function ProductsIndex({ products }: Props) {
                                     >
                                         <Link
                                             href={
-                                                productsIndex({
+                                                salesIndex({
                                                     query: {
                                                         page: Math.max(
                                                             1,
-                                                            products.current_page -
+                                                            sales.current_page -
                                                                 1,
                                                         ),
                                                     },
@@ -231,12 +149,12 @@ export default function ProductsIndex({ products }: Props) {
                                             preserveScroll
                                             preserveState
                                             className={
-                                                products.current_page === 1
+                                                sales.current_page === 1
                                                     ? 'pointer-events-none opacity-50'
                                                     : ''
                                             }
                                             aria-disabled={
-                                                products.current_page === 1
+                                                sales.current_page === 1
                                             }
                                         >
                                             <ChevronLeft className="size-4" />
@@ -248,8 +166,8 @@ export default function ProductsIndex({ products }: Props) {
                                 </PaginationItem>
 
                                 {pageItems(
-                                    products.current_page,
-                                    products.last_page,
+                                    sales.current_page,
+                                    sales.last_page,
                                 ).map((item, index) =>
                                     item === 'ellipsis' ? (
                                         <PaginationItem
@@ -262,13 +180,12 @@ export default function ProductsIndex({ products }: Props) {
                                             <PaginationLink
                                                 asChild
                                                 isActive={
-                                                    item ===
-                                                    products.current_page
+                                                    item === sales.current_page
                                                 }
                                             >
                                                 <Link
                                                     href={
-                                                        productsIndex({
+                                                        salesIndex({
                                                             query: {
                                                                 page: item,
                                                             },
@@ -293,11 +210,11 @@ export default function ProductsIndex({ products }: Props) {
                                     >
                                         <Link
                                             href={
-                                                productsIndex({
+                                                salesIndex({
                                                     query: {
                                                         page: Math.min(
-                                                            products.last_page,
-                                                            products.current_page +
+                                                            sales.last_page,
+                                                            sales.current_page +
                                                                 1,
                                                         ),
                                                     },
@@ -306,14 +223,14 @@ export default function ProductsIndex({ products }: Props) {
                                             preserveScroll
                                             preserveState
                                             className={
-                                                products.current_page ===
-                                                products.last_page
+                                                sales.current_page ===
+                                                sales.last_page
                                                     ? 'pointer-events-none opacity-50'
                                                     : ''
                                             }
                                             aria-disabled={
-                                                products.current_page ===
-                                                products.last_page
+                                                sales.current_page ===
+                                                sales.last_page
                                             }
                                         >
                                             <span className="hidden sm:inline">
@@ -332,11 +249,11 @@ export default function ProductsIndex({ products }: Props) {
     );
 }
 
-ProductsIndex.layout = {
+SalesIndex.layout = {
     breadcrumbs: [
         {
-            title: 'Products',
-            href: productsIndex().url,
+            title: 'Sales',
+            href: salesIndex().url,
         },
     ] as BreadcrumbItem[],
 };

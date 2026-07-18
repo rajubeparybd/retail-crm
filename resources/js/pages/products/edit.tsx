@@ -100,7 +100,9 @@ export default function ProductEdit({ product }: Props) {
                                             type="number"
                                             min="0"
                                             className="mt-1 block w-full"
-                                            defaultValue={product.stock_quantity}
+                                            defaultValue={
+                                                product.stock_quantity
+                                            }
                                             name="stock_quantity"
                                             required
                                             placeholder="0"

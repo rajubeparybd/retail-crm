@@ -7,29 +7,45 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Override;
 
 /**
  * @property int $id
- * @property string $name
- * @property string $sku
- * @property string $price
- * @property int $stock_quantity
+ * @property int|null $user_id
+ * @property int|null $customer_id
+ * @property string $total
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
 #[Guarded(['id'])]
-class Product extends Model
+class Sale extends Model
 {
-    /** @use HasFactory<\Database\Factories\ProductFactory> */
+    /** @use HasFactory<\Database\Factories\SaleFactory> */
     use HasFactory;
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo<Customer, $this>
+     */
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
     /**
      * @return HasMany<SaleItem, $this>
      */
-    public function saleItems(): HasMany
+    public function items(): HasMany
     {
         return $this->hasMany(SaleItem::class);
     }
@@ -41,8 +57,7 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'price' => 'decimal:2',
-            'stock_quantity' => 'integer',
+            'total' => 'decimal:2',
         ];
     }
 }

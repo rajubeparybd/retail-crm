@@ -19,4 +19,3 @@ export type Paginated<T> = {
 };
 
 export type PaginatedProducts = Paginated<Product>;
-
