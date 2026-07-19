@@ -19,5 +19,10 @@ class UserSeeder extends Seeder
         ]);
 
         $admin->assignRole('admin');
+
+        $employees = User::factory(10)->create();
+        foreach ($employees as $employee) {
+            $employee->assignRole('employee');
+        }
     }
 }
