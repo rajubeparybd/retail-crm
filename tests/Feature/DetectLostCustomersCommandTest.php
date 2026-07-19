@@ -7,8 +7,6 @@ use App\Models\Customer;
 use App\Models\Sale;
 use Illuminate\Support\Facades\Bus;
 
-uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 it('dispatches jobs for customers whose last purchase was before the threshold', function (): void {
     Bus::fake();
 

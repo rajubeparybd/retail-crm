@@ -12,7 +12,7 @@ use Illuminate\Validation\Rule;
 class UpdateProductRequest extends FormRequest
 {
     /**
-     * @return array<string, ValidationRule|array<int, string>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {

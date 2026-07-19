@@ -5,13 +5,6 @@ declare(strict_types=1);
 use App\Models\Customer;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia;
-use Spatie\Permission\Models\Role;
-
-beforeEach(function (): void {
-    // Ensure the admin and employee roles exist for every test.
-    Role::firstOrCreate(['name' => 'admin']);
-    Role::firstOrCreate(['name' => 'employee']);
-});
 
 describe('authentication & authorization', function (): void {
     test('guests are redirected to login', function (): void {

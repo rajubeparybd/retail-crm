@@ -36,11 +36,11 @@ class CustomerController extends Controller
                 'name' => $customer->name,
                 'email' => $customer->email,
                 'phone' => $customer->phone,
-                'purchase_count' => $customer->purchase_count,
-                'total_spent' => $customer->total_spent !== null
-                    ? number_format((float) $customer->total_spent, 2, '.', '')
+                'purchase_count' => $customer->getAttribute('purchase_count'),
+                'total_spent' => $customer->getAttribute('total_spent') !== null
+                    ? number_format((float) $customer->getAttribute('total_spent'), 2, '.', '')
                     : null,
-                'last_purchase_at' => $customer->last_purchase_at,
+                'last_purchase_at' => $customer->getAttribute('last_purchase_at'),
             ]);
 
         return Inertia::render('customers/index', [
@@ -49,9 +49,9 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function show(Customer $customer): Response
+    public function show(Customer $customer, ComputeCustomerPurchaseStats $computeCustomerPurchaseStats): Response
     {
-        $stats = app(ComputeCustomerPurchaseStats::class)->execute($customer);
+        $stats = $computeCustomerPurchaseStats->execute($customer);
 
         $sales = $customer->sales()
             ->with(['items.product', 'user'])

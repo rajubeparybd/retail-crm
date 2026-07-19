@@ -8,10 +8,14 @@ use App\Events\PurchaseSuccessful;
 use App\Mail\CustomerInvoice;
 use App\Models\Customer;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Attributes\Backoff;
+use Illuminate\Queue\Attributes\Tries;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Mail;
 
-class SendInvoiceToCustomer implements ShouldQueue
+#[Tries(3)]
+#[Backoff(60)]
+class SendInvoiceToCustomerListener implements ShouldQueue
 {
     use InteractsWithQueue;
 

@@ -29,16 +29,16 @@ class SaleSeeder extends Seeder
         for ($i = 0; $i < 30; $i++) {
             $sale = Sale::create([
                 'user_id' => $employees->random()->id,
-                'customer_id' => $customers->isNotEmpty() && rand(0, 1) ? $customers->random()->id : null,
+                'customer_id' => $customers->isNotEmpty() && random_int(0, 1) ? $customers->random()->id : null,
                 'total' => 0,
             ]);
 
-            $itemCount = rand(1, 5);
+            $itemCount = random_int(1, 5);
             $total = 0;
 
             for ($j = 0; $j < $itemCount; $j++) {
                 $product = $products->random();
-                $quantity = rand(1, 4);
+                $quantity = random_int(1, 4);
                 $unitPrice = $product->price;
                 $subtotal = bcmul((string) $unitPrice, (string) $quantity, 2);
 

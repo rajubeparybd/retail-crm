@@ -11,12 +11,14 @@ use App\Http\Requests\Sales\StoreSaleRequest;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Sale;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Throwable;
 
 class SaleController extends Controller
 {
@@ -74,13 +76,20 @@ class SaleController extends Controller
             ]);
 
             return back()->withInput();
+        } catch (Throwable) {
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => __('An error occurred while processing the sale.'),
+            ]);
+
+            return back()->withInput();
         }
 
         // Fire KPI event when a formerly-lost customer with an assigned employee purchases.
         if ($customer !== null && $customer->assigned_employee_id !== null) {
             $customer->loadMissing('assignedEmployee');
 
-            /** @var \App\Models\User $employee */
+            /** @var User $employee */
             $employee = $customer->assignedEmployee;
             LostCustomerMadePurchase::dispatch($customer, $employee);
         }

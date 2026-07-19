@@ -88,8 +88,14 @@ export default function Dashboard({ stats, recentSales }: Props) {
                             <Users className="size-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <Button variant="link" className="h-auto p-0 text-base font-semibold" asChild>
-                                <Link href={lostCustomersIndex().url}>Assign employees &rarr;</Link>
+                            <Button
+                                variant="link"
+                                className="h-auto p-0 text-base font-semibold"
+                                asChild
+                            >
+                                <Link href={lostCustomersIndex().url}>
+                                    Assign employees &rarr;
+                                </Link>
                             </Button>
                         </CardContent>
                     </Card>

@@ -46,7 +46,7 @@ describe('successful checkout', function (): void {
 
         $product->update(['price' => '99.99']);
 
-        expect(SaleItem::where('sale_id', $sale->id)->value('unit_price'))->toBe('12.00');
+        expect(SaleItem::whereSaleId($sale->id)->value('unit_price'))->toBe('12.00');
     });
 });
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Models\User;
 
-it('authenticates user and returns token', function () {
+it('authenticates user and returns token', function (): void {
     $user = User::factory()->create([
         'password' => 'password',
     ]);
@@ -19,7 +19,7 @@ it('authenticates user and returns token', function () {
         ->assertJsonStructure(['token']);
 });
 
-it('rejects invalid credentials', function () {
+it('rejects invalid credentials', function (): void {
     $user = User::factory()->create([
         'password' => 'password',
     ]);

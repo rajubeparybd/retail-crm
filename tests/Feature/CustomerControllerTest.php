@@ -57,7 +57,6 @@ describe('index', function (): void {
         $customer = Customer::factory()->create();
         $product = Product::factory()->create(['stock_quantity' => 10]);
 
-        // A walk-in sale: no customer passed to ProcessCheckout.
         app(ProcessCheckout::class)->execute($user, [
             ['product_id' => $product->id, 'quantity' => 1],
         ]);

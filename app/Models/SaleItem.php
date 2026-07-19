@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\SaleItemFactory;
 use Illuminate\Database\Eloquent\Attributes\Guarded;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ use Override;
 #[Guarded(['id'])]
 class SaleItem extends Model
 {
-    /** @use HasFactory<\Database\Factories\SaleItemFactory> */
+    /** @use HasFactory<SaleItemFactory> */
     use HasFactory;
 
     /**

@@ -7,12 +7,6 @@ namespace App\Exceptions;
 use App\Models\Product;
 use RuntimeException;
 
-/**
- * Thrown when a checkout line requests more units than are in stock.
- *
- * Propagates out of `DB::transaction()`, so the surrounding sale and any
- * partial stock decrements roll back automatically.
- */
 class InsufficientStockException extends RuntimeException
 {
     public function __construct(

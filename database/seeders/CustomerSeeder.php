@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class CustomerSeeder extends Seeder
@@ -13,10 +15,10 @@ class CustomerSeeder extends Seeder
      */
     public function run(): void
     {
-        $employees = \App\Models\User::role('employee')->get();
+        $employees = User::role('employee')->get();
 
-        \App\Models\Customer::factory(50)->create()->each(function ($customer) use ($employees) {
-            if (rand(0, 1) && $employees->count() > 0) {
+        Customer::factory(50)->create()->each(function ($customer) use ($employees): void {
+            if (random_int(0, 1) && $employees->count() > 0) {
                 $customer->update(['assigned_employee_id' => $employees->random()->id]);
             }
         });

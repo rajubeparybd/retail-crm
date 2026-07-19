@@ -7,8 +7,6 @@ use App\Mail\LostCustomerPromotionalMail;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Mail;
 
-uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
-
 it('sends a promotional email when CustomerBecameLost is fired', function (): void {
     Mail::fake();
 

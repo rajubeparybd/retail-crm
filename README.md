@@ -6,15 +6,15 @@ A monolithic Laravel application designed for retail customer relationship manag
 
 - **Authentication & Authorization**: Secure login and registration using Laravel Fortify and Sanctum, with role-based access control (Admin vs. Employee).
 - **Product Management**: Manage products, track inventory, and assign SKUs and pricing.
-- **Customer Management**: Register customers, maintain profiles, and assign specific employees for personalized re-engagement.
 - **Sales & Transaction Tracking**: Record sales, attach multiple products as sale items, and automatically calculate subtotals and grand totals.
 - **Employee KPI Tracking**: Event-driven architecture that listens to sales and automates KPI updates for employees based on their performance.
 - **Lost Customer Re-engagement**: A dedicated system (including artisan commands and scheduled tasks) to detect inactive customers and automatically assign them to employees for re-engagement.
 - **Automated Invoicing**: Sends styled HTML email invoices automatically upon a successful purchase using SMTP and decoupled event listeners.
+- **Product API**: Product API for third-party integration
 
 ## Prerequisites
 
-- PHP 8.2 or higher
+- PHP 8.3 or higher
 - Composer
 - Node.js & NPM
 - MySQL or PostgreSQL (or SQLite for local testing)
@@ -50,6 +50,11 @@ _By default, the application will be available at `http://localhost:8000`._
 You can log in using the administrator account seeded by default:
 
 - **Email:** admin@gmail.com
+- **Password:** password
+
+Or employee account:
+
+- **Email:** employee@gmail.com
 - **Password:** password
 
 ## API Routes

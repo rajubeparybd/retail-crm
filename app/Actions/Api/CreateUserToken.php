@@ -10,13 +10,6 @@ use Illuminate\Validation\ValidationException;
 
 class CreateUserToken
 {
-    /**
-     * Authenticate the user and generate a new API token.
-     *
-     * @param  array<string, mixed>  $data
-     *
-     * @throws ValidationException
-     */
     public function handle(array $data): string
     {
         /** @var User|null $user */

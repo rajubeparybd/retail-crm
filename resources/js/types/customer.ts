@@ -33,4 +33,3 @@ export type LostCustomerWithAssignment = {
 
 export type PaginatedCustomers = Paginated<CustomerWithStats>;
 export type PaginatedLostCustomers = Paginated<LostCustomerWithAssignment>;
-

@@ -21,10 +21,7 @@ class ProcessCheckout
         return DB::transaction(function () use ($salesman, $items, $customer): Sale {
             $this->ensureValidItems($items);
 
-            $productIds = array_map(
-                fn (array $item): int => (int) $item['product_id'],
-                $items,
-            );
+            $productIds = collect($items)->pluck('product_id')->unique();
 
             /** @var Collection<int, Product> $products */
             $products = Product::query()
@@ -33,13 +30,14 @@ class ProcessCheckout
                 ->get()
                 ->keyBy('id');
 
+            $total = '0';
+            $saleItems = [];
+
             foreach ($items as $item) {
                 $product = $products->get((int) $item['product_id']);
 
                 if ($product === null) {
-                    throw new InvalidArgumentException(
-                        "Product [{$item['product_id']}] does not exist.",
-                    );
+                    throw new InvalidArgumentException("Product [{$item['product_id']}] does not exist.");
                 }
 
                 $quantity = (int) $item['quantity'];
@@ -48,37 +46,38 @@ class ProcessCheckout
                     throw new InsufficientStockException(
                         $product,
                         $quantity,
-                        (int) $product->stock_quantity,
+                        (int) $product->stock_quantity
                     );
                 }
+
+                $subtotal = bcmul((string) $product->price, (string) $quantity, 2);
+                $total = bcadd($total, $subtotal, 2);
+
+                $saleItems[] = [
+                    'product_id' => $product->id,
+                    'quantity' => $quantity,
+                    'unit_price' => $product->price,
+                    'subtotal' => $subtotal,
+                ];
+
+                $product->stock_quantity -= $quantity;
             }
 
-            /** @var Sale $sale */
-            $sale = $salesman->sales()->create(['total' => '0']);
+            $sale = $salesman->sales()->make(['total' => $total]);
 
             if ($customer instanceof Customer) {
                 $sale->customer()->associate($customer);
             }
 
-            $total = '0';
-            foreach ($items as $item) {
-                $product = $products->get((int) $item['product_id']);
-                $quantity = (int) $item['quantity'];
+            $sale->save();
+            $sale->items()->createMany($saleItems);
 
-                $subtotal = bcmul((string) $product->price, (string) $quantity, 2);
-                $total = bcadd($total, $subtotal, 2);
-
-                $sale->items()->create([
-                    'product_id' => $product->id,
-                    'quantity' => $quantity,
-                    'unit_price' => $product->price,
-                    'subtotal' => $subtotal,
-                ]);
-
-                $product->decrement('stock_quantity', $quantity);
+            foreach ($products as $product) {
+                if ($product->isDirty('stock_quantity')) {
+                    $product->save();
+                }
             }
 
-            $sale->forceFill(['total' => $total])->save();
             $sale->load('items', 'customer');
 
             event(new PurchaseSuccessful($sale));

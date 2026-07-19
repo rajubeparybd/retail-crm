@@ -20,6 +20,14 @@ class UserSeeder extends Seeder
 
         $admin->assignRole('admin');
 
+        $employee = User::create([
+            'name' => 'Employee',
+            'email' => 'employee@gmail.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        $employee->assignRole('employee');
+
         $employees = User::factory(10)->create();
         foreach ($employees as $employee) {
             $employee->assignRole('employee');

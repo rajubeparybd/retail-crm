@@ -6,6 +6,7 @@ namespace App\Http\Requests\Sales;
 
 use App\Models\Product;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSaleRequest extends FormRequest
 {
@@ -27,7 +28,7 @@ class StoreSaleRequest extends FormRequest
             'items.*.product_id' => [
                 'required',
                 'integer',
-                'exists:' . (new Product)->getTable() . ',id',
+                Rule::exists(Product::class, 'id'),
             ],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
         ];

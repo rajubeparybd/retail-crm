@@ -9,11 +9,6 @@ use App\Models\Customer;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
-use Spatie\Permission\Models\Role;
-
-beforeEach(function (): void {
-    Role::firstOrCreate(['name' => 'admin']);
-});
 
 describe('IncrementEmployeeKpi action', function (): void {
     test('it atomically increments the employee kpi_score by 1 by default', function (): void {

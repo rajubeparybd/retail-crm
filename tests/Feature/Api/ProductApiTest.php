@@ -20,8 +20,8 @@ it('returns a paginated list of products with the correct structure', function (
     $response = $this->actingAs($user)->getJson(route('api.products.index'));
 
     $response->assertStatus(200)
-        ->assertJson(fn (AssertableJson $json) => $json->has('data')
-            ->has('data.0', fn (AssertableJson $json) => $json->hasAll(['sku', 'product_name', 'price', 'available_stock'])
+        ->assertJson(fn (AssertableJson $json): AssertableJson => $json->has('data')
+            ->has('data.0', fn (AssertableJson $json): AssertableJson => $json->hasAll(['sku', 'product_name', 'price', 'available_stock'])
             )
             ->has('links')
             ->has('meta')

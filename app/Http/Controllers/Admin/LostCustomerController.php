@@ -16,11 +16,11 @@ use Inertia\Response;
 
 class LostCustomerController extends Controller
 {
-    public function index(): Response
+    public function index(FindLostCustomers $findLostCustomers): Response
     {
         $days = (int) config('crm.lost_customer_days', 90);
 
-        $lostCustomerIds = app(FindLostCustomers::class)->execute($days)->pluck('id');
+        $lostCustomerIds = $findLostCustomers->execute($days)->pluck('id');
 
         $customers = Customer::query()
             ->whereIn('id', $lostCustomerIds)
@@ -34,7 +34,7 @@ class LostCustomerController extends Controller
                 'name' => $customer->name,
                 'email' => $customer->email,
                 'phone' => $customer->phone,
-                'last_purchase_at' => $customer->last_purchase_at,
+                'last_purchase_at' => $customer->getAttribute('last_purchase_at'),
                 'assigned_employee' => $customer->assignedEmployee
                     ? ['id' => $customer->assignedEmployee->id, 'name' => $customer->assignedEmployee->name]
                     : null,
@@ -54,6 +54,7 @@ class LostCustomerController extends Controller
     public function update(
         UpdateLostCustomerAssignmentRequest $request,
         Customer $customer,
+        AssignLostCustomer $assignLostCustomer
     ): RedirectResponse {
         $employeeId = $request->validated('employee_id');
 
@@ -61,7 +62,7 @@ class LostCustomerController extends Controller
             ? User::findOrFail($employeeId)
             : null;
 
-        app(AssignLostCustomer::class)->execute($customer, $employee);
+        $assignLostCustomer->execute($customer, $employee);
 
         return back();
     }
